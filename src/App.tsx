@@ -6,9 +6,6 @@ import {
   Plus,
   Bell,
   ChevronDown,
-  Bed,
-  Bath,
-  Maximize,
   Clock,
   CheckCircle2,
   Download,
@@ -31,6 +28,7 @@ import { cn } from "@/lib/utils"
 import Sidebar from "./components/Sidebar"
 import PdfEditor from "./components/PdfEditor"
 import AddDocumentsModal from "./components/AddDocumentsModal"
+import TransactionBanner from "./components/TransactionBanner"
 
 export default function App() {
   const [isEditorOpen, setIsEditorOpen] = useState(false)
@@ -45,10 +43,10 @@ export default function App() {
   })
 
   const propertyData = {
-    addr: 'Neighborhood 01, Neighborhood 02, Neighborhood 03',
-    city: 'Dublin, CA 94568',
+    addr: '1123 Folsom St',
+    city: 'San Francisco, CA 94103',
     type: 'Residential Single Family',
-    price: '500,000'
+    price: '26,250'
   }
   
   const openEditor = (docName: string) => {
@@ -57,16 +55,16 @@ export default function App() {
   }
 
   return (
-    <div className="flex bg-[#F9FAFB] min-h-screen">
+    <div className="flex bg-[#F9FAFB] min-h-screen font-inter">
       <Sidebar />
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top bar */}
         <header className="h-16 bg-white border-b px-8 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 text-xs font-medium text-brand">
-            <span className="opacity-50 hover:opacity-100 cursor-pointer">Active Offers</span>
+            <span className="opacity-50 hover:opacity-100 cursor-pointer">Active Transactions</span>
             <ChevronRight size={14} className="text-gray-300" />
-            <span className="text-gray-900 font-bold">Offer for John Buyer</span>
+            <span className="text-gray-900 font-bold">1123 Folsom St</span>
           </div>
 
           <div className="flex items-center gap-6">
@@ -94,39 +92,13 @@ export default function App() {
         <div className="flex-1 overflow-auto p-8 space-y-8">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Page Header */}
-            <div>
-              <h1 className="text-3xl font-bold text-brand-dark mb-6">Offer for [buyer name]</h1>
+            <div className="space-y-6">
+              <h1 className="text-3xl font-bold text-brand-dark tracking-tight">Audit Dashboard</h1>
 
-              {/* Property Card */}
-              <Card className="border-none shadow-premium bg-white p-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-brand/10 transition-colors" />
-                <div className="flex justify-between items-start">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <h2 className="text-2xl font-bold text-brand-dark">Neighborhood 01, Neighborhood 02 , Neighborhood 03...</h2>
-                      <Badge className="bg-brand-dark text-white rounded-md h-6 px-2 uppercase text-[10px] font-bold">Active</Badge>
-                    </div>
-                    <div className="text-brand-muted font-medium">Dublin, CA 94568</div>
-                    <div className="flex items-center gap-8 text-sm text-brand-muted font-bold">
-                      <span className="flex items-center gap-2"><Bed size={16} /> 4 beds</span>
-                      <span className="flex items-center gap-2"><Bath size={16} /> 4 baths</span>
-                      <span className="flex items-center gap-2"><Maximize size={16} /> 2,208 sqft</span>
-                    </div>
-                  </div>
-                  <div className="text-right flex flex-col items-end gap-4">
-                    <div className="text-4xl font-bold text-brand-dark">$500K</div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 h-8 px-3 rounded-md uppercase text-[10px] font-black flex items-center gap-2 translate-y-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        In Progress
-                        <ChevronDown size={14} />
-                      </Badge>
-                    </div>
-                    <span className="text-[10px] text-brand-muted mt-4">Last updated xx/xx/xxxx</span>
-                  </div>
-                </div>
-              </Card>
+              {/* High-Fidelity Transaction Banner */}
+              <TransactionBanner />
             </div>
+
 
             {/* Main Tabs */}
             <Tabs defaultValue="documents" className="w-full">
