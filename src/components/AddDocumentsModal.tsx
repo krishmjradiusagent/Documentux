@@ -103,7 +103,7 @@ export default function AddDocumentsModal({
   
   // High-Fidelity Upload Management
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
-  const [globalUploadType, setGlobalUploadType] = useState('Documents for my own use')
+  const globalUploadType = 'Documents for my own use'
   
   const fileInputRef = useRef<HTMLInputElement>(null)
 
