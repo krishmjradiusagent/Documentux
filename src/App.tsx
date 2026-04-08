@@ -93,8 +93,6 @@ export default function App() {
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Page Header */}
             <div className="space-y-6">
-              <h1 className="text-3xl font-bold text-brand-dark tracking-tight">Audit Dashboard</h1>
-
               {/* High-Fidelity Transaction Banner */}
               <TransactionBanner />
             </div>
