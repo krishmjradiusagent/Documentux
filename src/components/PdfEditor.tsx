@@ -64,6 +64,7 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
   const [lastSaved, setLastSaved] = useState<string>('Just now')
   const [isReady, setIsReady] = useState(false)
   const [showAllParties, setShowAllParties] = useState(false)
+  const [zoom, setZoom] = useState(100)
 
   const [parties, setParties] = useState<Party[]>([
     { id: 'p1', name: 'Vanessa Brown', role: 'Agent (You)', color: 'bg-brand', active: true },
@@ -219,11 +220,25 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
 
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="flex items-center bg-gray-100/50 rounded-xl p-1 border group hover:border-brand/20 transition-all">
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-gray-400 hover:text-brand hover:bg-white transition-all"><ZoomOut size={16} /></Button>
-              <div className="px-3">
-                 <span className="text-[11px] font-black text-gray-900">100%</span>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setZoom(prev => Math.max(50, prev - 10))}
+                className="h-8 w-8 rounded-lg text-gray-400 hover:text-brand hover:bg-white transition-all"
+              >
+                <ZoomOut size={16} />
+              </Button>
+              <div className="px-3 min-w-[56px] text-center">
+                 <span className="text-[11px] font-black text-gray-900">{zoom}%</span>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-gray-400 hover:text-brand hover:bg-white transition-all"><ZoomIn size={16} /></Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setZoom(prev => Math.min(200, prev + 10))}
+                className="h-8 w-8 rounded-lg text-gray-400 hover:text-brand hover:bg-white transition-all"
+              >
+                <ZoomIn size={16} />
+              </Button>
             </div>
             
             <Separator orientation="vertical" className="h-8 mx-1" />
@@ -248,51 +263,44 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
 
       <div className="flex-1 flex overflow-hidden">
         {/* Pages Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-          <div className="p-8 pb-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Page Audit</h3>
-              <Badge variant="outline" className="text-[9px] bg-gray-50 border-none font-black px-2 py-0.5">{currentPage} / 4</Badge>
-            </div>
+        <aside className="w-20 bg-white border-r flex flex-col z-10 shadow-[2px_0_12px_rgba(0,0,0,0.02)]">
+          <div className="py-6 flex flex-col items-center border-b bg-gray-50/30">
+             <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Page</span>
+             <span className="text-[11px] font-black text-gray-900 mt-1">{currentPage}/4</span>
           </div>
           
           <ScrollArea className="flex-1">
-            <div className="px-8 pt-12 pb-32 space-y-12">
+            <div className="py-8 flex flex-col items-center gap-8">
               {[1, 2, 3, 4].map((page) => (
-                <div
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={cn(
-                    "aspect-[1/1.41] w-full rounded-[24px] transition-all duration-500 cursor-pointer relative bg-white",
-                    currentPage === page 
-                      ? "ring-2 ring-brand ring-offset-4 shadow-[0_20px_40px_-12px_rgba(90,95,242,0.25)] scale-[1.04]" 
-                      : "border-2 border-gray-100 hover:border-brand/20 hover:shadow-xl hover:shadow-black/5"
-                  )}
-                >
-                  {/* High-Fidelity Skeleton Preview with Internal Clipping */}
-                  <div className="absolute inset-0 p-5 space-y-4 opacity-[0.4] group-hover:opacity-[0.6] transition-opacity overflow-hidden rounded-[24px]">
-                    <div className="h-2 w-2/3 bg-gray-200 rounded-full" />
-                    <div className="space-y-2">
-                      <div className="h-1.5 w-full bg-gray-100 rounded-full" />
-                      <div className="h-1.5 w-full bg-gray-100 rounded-full" />
-                      <div className="h-1.5 w-5/6 bg-gray-100 rounded-full" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                       <div className="h-4 bg-gray-50 rounded-lg" />
-                       <div className="h-4 bg-gray-50 rounded-lg" />
-                    </div>
-                    <div className="h-1.5 w-full bg-gray-100 rounded-full" />
-                    <div className="space-y-2 pt-2">
-                      <div className="h-1.5 w-full bg-gray-100 rounded-full" />
-                      <div className="h-1.5 w-3/4 bg-gray-100 rounded-full" />
-                    </div>
-                  </div>
-
-                  {/* Floating Page Label */}
-                  <div className={cn(
-                    "absolute bottom-4 right-4 w-8 h-8 rounded-2xl flex items-center justify-center text-[11px] font-black z-10 shadow-lg transition-all",
-                    currentPage === page ? "bg-brand text-white scale-110" : "bg-white text-gray-400 border border-gray-100"
-                  )}>{page}</div>
+                <div key={page} className="relative w-full flex items-center justify-center">
+                   <AnimatePresence>
+                     {currentPage === page && (
+                       <motion.div 
+                          layoutId="activeRailBlade"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="absolute left-0 w-1.5 h-8 bg-brand rounded-r-full shadow-[2px_0_8px_rgba(90,95,242,0.4)]"
+                       />
+                     )}
+                   </AnimatePresence>
+                   <motion.button
+                     key={`page-btn-${page}`}
+                     whileHover={{ scale: 1.05 }}
+                     whileTap={{ scale: 0.95 }}
+                     onClick={() => setCurrentPage(page)}
+                     animate={{
+                       backgroundColor: currentPage === page ? "#5A5FF2" : "#FFFFFF",
+                       color: currentPage === page ? "#FFFFFF" : (currentPage === page ? "#FFFFFF" : "#6B7280"),
+                       borderColor: currentPage === page ? "#5A5FF2" : "#F3F4F6",
+                       boxShadow: currentPage === page ? "0 10px 15px -3px rgba(90, 95, 242, 0.3)" : "none"
+                     }}
+                     className={cn(
+                       "w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-black transition-all border-2 relative z-10",
+                       currentPage === page ? "ring-4 ring-brand/10" : "hover:border-brand/30"
+                     )}
+                   >
+                     <span className="relative z-20 pointer-events-none">{page}</span>
+                   </motion.button>
                 </div>
               ))}
             </div>
@@ -300,13 +308,24 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
         </aside>
 
         {/* Main Document Canvas */}
-        <main className="flex-1 overflow-auto p-12 lg:p-20 flex flex-col items-center bg-[#F8FAFC] z-0 scroll-smooth">
-          <motion.div
-            key={currentPage}
-            initial={{ opacity: 0, scale: 0.99, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="max-w-4xl w-full bg-white shadow-[0_32px_96px_-12px_rgba(0,0,0,0.1)] relative min-h-[1400px] p-24 rounded-lg mb-20 border border-gray-100"
-          >
+        <main className="flex-1 overflow-auto p-8 lg:p-12 bg-[#F8FAFC] z-0 scroll-smooth">
+          <div className="flex flex-col items-center min-w-max">
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, scale: (zoom / 100) * 0.99, y: 10 }}
+              animate={{ 
+                opacity: 1, 
+                scale: zoom / 100, 
+                y: 0,
+                transition: { 
+                   opacity: { duration: 0.3 },
+                   scale: { type: "spring", stiffness: 300, damping: 30 },
+                   y: { duration: 0.4, ease: [0.32, 0.72, 0, 1] }
+                }
+              }}
+              style={{ transformOrigin: 'top center' }}
+              className="max-w-[1000px] w-full bg-white shadow-[0_32px_96px_-12px_rgba(0,0,0,0.14)] relative min-h-[1400px] p-16 lg:p-24 rounded-2xl mb-20 border border-gray-100"
+            >
             {/* Watermark/Grid Overlay */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#5A5FF2_1px,transparent_1px)] [background-size:32px_32px]" />
 
@@ -392,6 +411,7 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               </div>
             )}
           </motion.div>
+          </div>
         </main>
 
         {/* Tools Palette (Right) */}
