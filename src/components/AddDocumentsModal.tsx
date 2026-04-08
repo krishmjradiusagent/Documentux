@@ -4,16 +4,12 @@ import {
   FilePlus, 
   Search, 
   Upload, 
-  FileText,
   ArrowRight,
   Eye,
   Download,
-  X,
-  Layers,
   Trash2,
   Plus,
-  MoreVertical,
-  ExternalLink
+  MoreVertical
 } from 'lucide-react'
 import { 
   Dialog, 
@@ -287,7 +283,7 @@ export default function AddDocumentsModal({
                                 <tr className="bg-gray-50/50">
                                   <th className="text-left py-3 pl-8 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] w-[72%]">Document Name</th>
                                   <th className="text-left py-3 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] w-[210px]">Usage Mapping</th>
-                                  <th className="text-right py-3 pr-8 w-12" /> {/* Reclaimed Actions space */}
+                                  <th className="text-right py-3 pr-8 w-12" />
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-gray-50/80">
@@ -407,7 +403,7 @@ export default function AddDocumentsModal({
                                       <div className="flex items-center gap-3">
                                         <Tooltip>
                                           <TooltipTrigger asChild>
-                                            <span className="font-bold text-[13px] text-gray-800 tracking-tight truncate max-w-[650px]">{form.name}</span>
+                                            <span className="font-bold text-[13px] text-gray-800 tracking-tight truncate max-w-[600px]">{form.name}</span>
                                           </TooltipTrigger>
                                           <TooltipContent side="top" align="start" className="bg-gray-900/90 text-white rounded-lg py-2 px-4 shadow-2xl border-none">
                                             <p className="text-[10px] font-bold">{form.name}</p>
