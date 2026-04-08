@@ -37,7 +37,7 @@ export default function App() {
   const [isAddDocOpen, setIsAddDocOpen] = useState(false)
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
 
-  const [docStatuses, setDocStatuses] = useState<Record<string, string>>({
+  const [docStatuses] = useState<Record<string, string>>({
     'KL_A_Keysafe/Lockbox Addendum and Tenant Permission to Access Property_Buyer Representation': 'In Progress',
     'Lead-Based Paint Disclosure - Seller': 'Not Started',
     'Exclusive Right to Sell Listing Agreement': 'In Progress',
