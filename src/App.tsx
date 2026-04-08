@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { 
-  FileText, 
-  ChevronRight, 
-  Plus, 
+import {
+  FileText,
+  ChevronRight,
+  Plus,
   Bell,
   ChevronDown,
   Bed,
@@ -13,9 +13,6 @@ import {
   CheckCircle2,
   Download,
   MoreVertical,
-  Eye,
-  Trash2,
-  Search,
   ArrowRight
 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -24,19 +21,35 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
 } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
 import Sidebar from "./components/Sidebar"
 import PdfEditor from "./components/PdfEditor"
+import AddDocumentsModal from "./components/AddDocumentsModal"
 
 export default function App() {
   const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [isAddDocOpen, setIsAddDocOpen] = useState(false)
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
+
+  const [docStatuses, setDocStatuses] = useState<Record<string, string>>({
+    'KL_A_Keysafe/Lockbox Addendum and Tenant Permission to Access Property_Buyer Representation': 'In Progress',
+    'Lead-Based Paint Disclosure - Seller': 'Not Started',
+    'Exclusive Right to Sell Listing Agreement': 'In Progress',
+    'Property Condition Disclosure Statement': 'Completed'
+  })
+
+  const propertyData = {
+    addr: 'Neighborhood 01, Neighborhood 02, Neighborhood 03',
+    city: 'Dublin, CA 94568',
+    type: 'Residential Single Family',
+    price: '500,000'
+  }
   
   const openEditor = (docName: string) => {
     setSelectedDoc(docName)
@@ -46,7 +59,7 @@ export default function App() {
   return (
     <div className="flex bg-[#F9FAFB] min-h-screen">
       <Sidebar />
-      
+
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top bar */}
         <header className="h-16 bg-white border-b px-8 flex items-center justify-between flex-shrink-0">
@@ -83,7 +96,7 @@ export default function App() {
             {/* Page Header */}
             <div>
               <h1 className="text-3xl font-bold text-brand-dark mb-6">Offer for [buyer name]</h1>
-              
+
               {/* Property Card */}
               <Card className="border-none shadow-premium bg-white p-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-brand/10 transition-colors" />
@@ -122,7 +135,7 @@ export default function App() {
                 <TabsTrigger value="contract" className="bg-transparent border-b-2 border-transparent rounded-none px-0 py-4 h-auto data-[state=active]:border-brand data-[state=active]:text-brand font-bold text-brand-muted transition-all">Contract Details</TabsTrigger>
                 <TabsTrigger value="documents" className="bg-transparent border-b-2 border-transparent rounded-none px-0 py-4 h-auto data-[state=active]:border-brand data-[state=active]:text-brand font-bold text-brand-muted transition-all">Documents</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="documents" className="mt-0">
                 <div className="flex flex-col gap-6">
                   {/* Secondary Documents Tabs */}
@@ -146,7 +159,12 @@ export default function App() {
                         <Card className="border shadow-sm bg-white overflow-hidden rounded-2xl">
                           <CardHeader className="px-6 py-5 border-b flex flex-row items-center justify-between">
                             <CardTitle className="text-base font-bold text-brand-dark">Recommended Forms</CardTitle>
-                            <Button variant="ghost" size="sm" className="text-brand font-bold flex items-center gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-brand font-bold flex items-center gap-1 active:scale-95 transition-all"
+                              onClick={() => setIsAddDocOpen(true)}
+                            >
                               <Plus size={14} />
                               Add documents
                               <ChevronDown size={14} />
@@ -167,43 +185,62 @@ export default function App() {
                                 </Button>
                               </div>
                             </div>
-                            
+
                             {/* Document List */}
-                            <div className="divide-y">
+                            <div className="divide-y text-xs">
                               {[
                                 'KL_A_Keysafe/Lockbox Addendum and Tenant Permission to Access Property_Buyer Representation',
                                 'Lead-Based Paint Disclosure - Seller',
                                 'Exclusive Right to Sell Listing Agreement',
                                 'Property Condition Disclosure Statement'
-                              ].map((doc, idx) => (
-                                <div key={idx} className="p-6 flex items-start gap-4 group hover:bg-gray-50/30 transition-colors">
-                                  <Checkbox className="rounded-md border-gray-300 h-5 w-5 mt-1" />
-                                  <div className="flex-1 space-y-3">
-                                    <div className="font-bold text-sm text-brand-dark leading-tight">{doc}</div>
-                                    {idx === 3 ? (
-                                      <Button variant="ghost" size="sm" className="h-auto p-0 text-emerald-500 font-bold text-xs flex items-center gap-2">
-                                        <CheckCircle2 size={16} />
-                                        View
-                                      </Button>
-                                    ) : (
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => openEditor(doc)}
-                                        className="h-auto p-0 text-brand font-bold text-xs flex items-center gap-2 hover:bg-transparent hover:text-brand/80"
-                                      >
-                                        <Clock size={16} />
-                                        View
-                                      </Button>
-                                    )}
+                              ].map((doc, idx) => {
+                                const status = docStatuses[doc] || 'Not Started'
+                                return (
+                                  <div key={idx} className="p-6 flex items-start gap-4 group hover:bg-gray-50/30 transition-colors">
+                                    <Checkbox className="rounded-md border-gray-300 h-5 w-5 mt-1" />
+                                    <div className="flex-1 space-y-3">
+                                      <div className="flex items-center justify-between">
+                                        <div className="font-bold text-sm text-brand-dark leading-tight max-w-[400px]">{doc}</div>
+                                        <Badge variant="outline" className={cn(
+                                          "px-2 h-5 text-[9px] font-black uppercase tracking-tighter border-none",
+                                          status === 'Ready to Send' ? "bg-brand text-white" :
+                                          status === 'Completed' ? "bg-emerald-50 text-emerald-600" :
+                                          status === 'In Progress' ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-400"
+                                        )}>
+                                          {status}
+                                        </Badge>
+                                      </div>
+                                      <div className="flex items-center gap-4">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => openEditor(doc)}
+                                          className={cn(
+                                            "h-auto p-0 font-bold text-xs flex items-center gap-2 hover:bg-transparent",
+                                            status === 'Completed' || status === 'Ready to Send' ? "text-emerald-500" : "text-brand"
+                                          )}
+                                        >
+                                          {status === 'Completed' || status === 'Ready to Send' ? <CheckCircle2 size={16} /> : <Clock size={16} />}
+                                          {status === 'Not Started' ? 'Start filling' : 'View or fill'}
+                                        </Button>
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest pl-4 border-l">Modified x min ago</span>
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                )
+                              })}
                             </div>
 
                             <div className="p-6 pt-2">
-                              <Button className="bg-brand hover:bg-brand/90 text-white rounded-full px-8 py-6 h-auto font-bold shadow-lg shadow-brand/10 w-auto">
+                              <Button 
+                                disabled={Object.values(docStatuses).some(s => s !== 'Completed' && s !== 'Ready to Send')}
+                                className={cn(
+                                  "bg-brand hover:bg-brand/90 text-white rounded-full px-8 py-6 h-auto font-bold shadow-lg shadow-brand/20 w-auto active:scale-95 transition-all",
+                                  Object.values(docStatuses).some(s => s !== 'Completed' && s !== 'Ready to Send') && "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+                                )}
+                              >
                                 Create & send envelope
+                                <ArrowRight size={18} className="ml-2" />
                               </Button>
                             </div>
                           </CardContent>
@@ -238,7 +275,7 @@ export default function App() {
                                   <div>
                                     <div className="flex items-center gap-2 group">
                                       <h4 className="font-bold text-brand-dark text-base">Envelope 1</h4>
-                                      <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"><MoreVertical size={14}/></Button>
+                                      <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"><MoreVertical size={14} /></Button>
                                     </div>
                                     <p className="text-[10px] text-red-400 font-bold uppercase mt-1 tracking-wider">Your signature pending</p>
                                   </div>
@@ -292,7 +329,7 @@ export default function App() {
                                   </div>
                                 </div>
 
-                                <Button 
+                                <Button
                                   onClick={() => openEditor('Envelope 1')}
                                   className="w-full bg-brand hover:bg-brand/90 text-white rounded-full py-6 font-bold shadow-lg shadow-brand/20"
                                 >
@@ -312,12 +349,19 @@ export default function App() {
         </div>
       </div>
 
+      <AddDocumentsModal 
+        open={isAddDocOpen} 
+        onOpenChange={setIsAddDocOpen}
+        onAdd={(docs) => console.log('Added documents:', docs)}
+      />
+
       {/* Full-screen Editor Transition */}
       <AnimatePresence>
         {isEditorOpen && selectedDoc && (
-          <PdfEditor 
-            documentName={selectedDoc} 
-            onClose={() => setIsEditorOpen(false)} 
+          <PdfEditor
+            documentName={selectedDoc}
+            initialData={propertyData}
+            onClose={() => setIsEditorOpen(false)}
           />
         )}
       </AnimatePresence>
