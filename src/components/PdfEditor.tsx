@@ -435,36 +435,47 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               style={{ transformOrigin: 'top center' }}
               className="max-w-[1000px] w-full bg-white shadow-[0_32px_96px_-12px_rgba(0,0,0,0.14)] relative min-h-[1400px] p-16 lg:p-24 rounded-2xl mb-20 border border-gray-100"
             >
-            {/* Persisted Drag-and-Drop Fields */}
-            {placedFields.filter(f => f.pageNum === currentPage).map(field => (
-              <motion.div
-                key={field.id}
-                drag
-                dragMomentum={false}
-                onDragEnd={(_, info) => handleReposition(field.id, info)}
-                style={{ 
-                  left: `${field.x}%`, 
-                  top: `${field.y}%`,
-                  position: 'absolute'
-                }}
-                className={cn(
-                  "z-30 cursor-grab active:cursor-grabbing p-1.5 px-3 rounded-lg flex items-center gap-2 shadow-premium border-2 select-none group/field transition-shadow hover:shadow-xl",
-                  field.color,
-                  field.color.replace('bg-', 'border-'),
-                  "text-white shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]"
-                )}
-              >
-                <div className="opacity-80 scale-75">{field.icon}</div>
-                <span className="text-[10px] font-black uppercase tracking-widest">{field.label}</span>
-                <button 
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={() => handleDeletePlaced(field.id)}
-                  className="ml-1 opacity-0 group-hover/field:opacity-100 p-0.5 hover:bg-black/20 rounded transition-all"
+            {placedFields.filter(f => f.pageNum === currentPage).map(field => {
+              const owner = parties.find(p => p.id === field.ownerId) || parties[0]
+              
+              return (
+                <motion.div
+                  key={field.id}
+                  drag
+                  dragMomentum={false}
+                  onDragEnd={(_, info) => handleReposition(field.id, info)}
+                  style={{ 
+                    left: `${field.x}%`, 
+                    top: `${field.y}%`,
+                    position: 'absolute'
+                  }}
+                  className={cn(
+                    "z-30 cursor-grab active:cursor-grabbing p-2.5 px-4 rounded-xl flex flex-col gap-1 shadow-premium border-2 select-none group/field transition-shadow hover:shadow-2xl",
+                    field.color,
+                    field.color.replace('bg-', 'border-'),
+                    "text-white shadow-[0_12px_24px_-8px_rgba(0,0,0,0.3)] min-w-[140px]"
+                  )}
                 >
-                  <X size={10} />
-                </button>
-              </motion.div>
-            ))}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 opacity-80">
+                      <div className="scale-75">{field.icon}</div>
+                      <span className="text-[8px] font-black uppercase tracking-[0.2em]">{field.label}</span>
+                    </div>
+                    <button 
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={() => handleDeletePlaced(field.id)}
+                      className="opacity-0 group-hover/field:opacity-100 p-0.5 hover:bg-black/20 rounded transition-all"
+                    >
+                      <X size={10} />
+                    </button>
+                  </div>
+                  
+                  <div className="mt-0.5">
+                    <span className="text-[12px] font-black tracking-tight truncate block">{owner.name}</span>
+                  </div>
+                </motion.div>
+              )
+            })}
             {/* Watermark/Grid Overlay */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#5A5FF2_1px,transparent_1px)] [background-size:32px_32px]" />
 
