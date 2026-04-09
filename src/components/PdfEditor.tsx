@@ -59,6 +59,18 @@ interface FormField {
   status: 'empty' | 'filled'
 }
 
+interface PlacedField {
+  id: string
+  type: string
+  label: string
+  icon: React.ReactNode
+  x: number
+  y: number
+  pageNum: number
+  ownerId: string
+  color: string
+}
+
 interface Party {
   id: string
   name: string
@@ -143,6 +155,60 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
     if (filledCount === fields.length) return 'Completed'
     return 'In Progress'
   }, [fields, isReady])
+
+  const [placedFields, setPlacedFields] = useState<PlacedField[]>([])
+  const activeParty = parties.find(p => p.active) || parties[0]
+
+  const handleFieldDrop = (fieldData: any, info: any) => {
+    const canvas = document.getElementById('pdf-canvas-container')
+    if (!canvas) return
+
+    const rect = canvas.getBoundingClientRect()
+    const x = ((info.point.x - rect.left) / rect.width) * 100
+    const y = ((info.point.y - rect.top) / rect.height) * 100
+
+    // Ensure it's dropped within bounds (with a small buffer)
+    if (x >= -5 && x <= 105 && y >= -5 && y <= 105) {
+      const newField: PlacedField = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: fieldData.label,
+        label: fieldData.label,
+        icon: fieldData.icon,
+        x: Math.max(0, Math.min(x, 90)),
+        y: Math.max(0, Math.min(y, 95)),
+        pageNum: currentPage,
+        ownerId: activeParty.id,
+        color: activeParty.color
+      }
+      setPlacedFields(prev => [...prev, newField])
+      setIsSaving(true)
+    }
+  }
+
+  const handleReposition = (id: string, info: any) => {
+    const canvas = document.getElementById('pdf-canvas-container')
+    if (!canvas) return
+    const rect = canvas.getBoundingClientRect()
+    
+    setPlacedFields(prev => prev.map(f => {
+      if (f.id === id) {
+        const x = ((info.point.x - rect.left) / rect.width) * 100
+        const y = ((info.point.y - rect.top) / rect.height) * 100
+        return { 
+          ...f, 
+          x: Math.max(0, Math.min(x, 90)), 
+          y: Math.max(0, Math.min(y, 95)) 
+        }
+      }
+      return f
+    }))
+    setIsSaving(true)
+  }
+
+  const handleDeletePlaced = (id: string) => {
+    setPlacedFields(prev => prev.filter(f => f.id !== id))
+    setIsSaving(true)
+  }
 
   const progress = Math.round((fields.filter(f => f.status === 'filled').length / fields.length) * 100)
 
@@ -283,10 +349,10 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               <div className="py-2 px-2">
                 <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Standard fields</h4>
                 <div className="space-y-1">
-                  <FieldItem icon={<PenLine size={16} />} label="Signature" color="text-[#FFB800]" />
-                  <FieldItem icon={<div className="font-black text-[10px]">DS</div>} label="Initial" color="text-[#4F46E5]" />
-                  <FieldItem icon={<Stamp size={16} />} label="Stamp" color="text-[#6366F1]" />
-                  <FieldItem icon={<Calendar size={16} />} label="Date Signed" color="text-[#10B981]" />
+                  <FieldItem icon={<PenLine size={16} />} label="Signature" color="text-[#FFB800]" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<div className="font-black text-[10px]">DS</div>} label="Initial" color="text-[#4F46E5]" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Stamp size={16} />} label="Stamp" color="text-[#6366F1]" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Calendar size={16} />} label="Date Signed" color="text-[#10B981]" onDrop={handleFieldDrop} />
                 </div>
               </div>
 
@@ -295,12 +361,12 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               <div className="py-2 px-2">
                 <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Personal info</h4>
                 <div className="space-y-1">
-                  <FieldItem icon={<User size={16} />} label="Full Name" />
-                  <FieldItem icon={<User size={16} className="opacity-50" />} label="First Name" />
-                  <FieldItem icon={<User size={16} className="opacity-50" />} label="Last Name" />
-                  <FieldItem icon={<Mail size={16} />} label="Email Address" />
-                  <FieldItem icon={<Building2 size={16} />} label="Company" />
-                  <FieldItem icon={<Briefcase size={16} />} label="Title" />
+                  <FieldItem icon={<User size={16} />} label="Full Name" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<User size={16} className="opacity-50" />} label="First Name" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<User size={16} className="opacity-50" />} label="Last Name" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Mail size={16} />} label="Email Address" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Building2 size={16} />} label="Company" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Briefcase size={16} />} label="Title" onDrop={handleFieldDrop} />
                 </div>
               </div>
 
@@ -309,8 +375,8 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               <div className="py-2 px-2">
                 <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Inputs</h4>
                 <div className="space-y-1">
-                  <FieldItem icon={<Type size={16} />} label="Text Box" />
-                  <FieldItem icon={<Square size={16} />} label="Checkbox" />
+                  <FieldItem icon={<Type size={16} />} label="Text Box" onDrop={handleFieldDrop} />
+                  <FieldItem icon={<Square size={16} />} label="Checkbox" onDrop={handleFieldDrop} />
                 </div>
               </div>
             </div>
@@ -353,6 +419,7 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
             </div>
 
             <motion.div
+              id="pdf-canvas-container"
               key={currentPage}
               initial={{ opacity: 0, scale: (zoom / 100) * 0.99, y: 10 }}
               animate={{ 
@@ -368,6 +435,35 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
               style={{ transformOrigin: 'top center' }}
               className="max-w-[1000px] w-full bg-white shadow-[0_32px_96px_-12px_rgba(0,0,0,0.14)] relative min-h-[1400px] p-16 lg:p-24 rounded-2xl mb-20 border border-gray-100"
             >
+            {/* Persisted Drag-and-Drop Fields */}
+            {placedFields.filter(f => f.pageNum === currentPage).map(field => (
+              <motion.div
+                key={field.id}
+                drag
+                dragMomentum={false}
+                onDragEnd={(_, info) => handleReposition(field.id, info)}
+                style={{ 
+                  left: `${field.x}%`, 
+                  top: `${field.y}%`,
+                  position: 'absolute'
+                }}
+                className={cn(
+                  "z-30 cursor-grab active:cursor-grabbing p-1 px-3 rounded-lg flex items-center gap-2 shadow-premium border-2 select-none group/field",
+                  field.color,
+                  "text-white bg-opacity-90 backdrop-blur-sm"
+                )}
+              >
+                <div className="opacity-80 scale-75">{field.icon}</div>
+                <span className="text-[10px] font-black uppercase tracking-widest">{field.label}</span>
+                <button 
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => handleDeletePlaced(field.id)}
+                  className="ml-1 opacity-0 group-hover/field:opacity-100 p-0.5 hover:bg-black/20 rounded transition-all"
+                >
+                  <X size={10} />
+                </button>
+              </motion.div>
+            ))}
             {/* Watermark/Grid Overlay */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#5A5FF2_1px,transparent_1px)] [background-size:32px_32px]" />
 
@@ -661,20 +757,25 @@ function EditableField({ label, value, owner, onChange }: { label: string, value
   )
 }
 
-function FieldItem({ icon, label, color = "text-gray-500" }: { icon: React.ReactNode, label: string, color?: string }) {
+function FieldItem({ icon, label, color = "text-gray-500", onDrop }: { icon: React.ReactNode, label: string, color?: string, onDrop: (data: any, info: any) => void }) {
   return (
     <motion.div 
+      drag
+      dragSnapToOrigin
+      dragElastic={0.1}
+      dragMomentum={false}
+      onDragEnd={(_, info) => onDrop({ icon, label }, info)}
       whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm cursor-grab active:cursor-grabbing border-2 border-transparent hover:border-brand/10 group transition-all"
+      whileTap={{ scale: 0.95 }}
+      className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm cursor-grab active:cursor-grabbing border-2 border-transparent hover:border-brand/10 group transition-all relative z-50 bg-white"
     >
       <div className={cn(
-        "w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center transition-all group-hover:rotate-3 shadow-inner",
+        "w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center transition-all group-hover:rotate-3 shadow-inner pointer-events-none",
         color
       )}>
         {icon}
       </div>
-      <span className="text-[12px] font-bold text-gray-600 group-hover:text-gray-900 transition-colors truncate">{label}</span>
+      <span className="text-[12px] font-bold text-gray-600 group-hover:text-gray-900 transition-colors truncate pointer-events-none">{label}</span>
     </motion.div>
   )
 }
