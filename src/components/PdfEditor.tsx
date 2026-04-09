@@ -15,7 +15,17 @@ import {
   AlertCircle,
   MoreVertical,
   CheckCircle2,
-  Users as UsersIcon
+  Users as UsersIcon,
+  PenLine,
+  Type,
+  Calendar,
+  User,
+  Mail,
+  Briefcase,
+  Square,
+  Stamp,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -262,54 +272,86 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
       </nav>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Pages Sidebar */}
-        <aside className="w-20 bg-white border-r flex flex-col z-10 shadow-[2px_0_12px_rgba(0,0,0,0.02)]">
-          <div className="py-6 flex flex-col items-center border-b bg-gray-50/30">
-             <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Page</span>
-             <span className="text-[11px] font-black text-gray-900 mt-1">{currentPage}/4</span>
+        {/* Fields Sidebar (Left) */}
+        <aside className="w-64 bg-white border-r flex flex-col z-10 shadow-[2px_0_12px_rgba(0,0,0,0.02)]">
+          <div className="px-6 py-5 border-b bg-gray-50/50">
+             <h3 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em]">Drafting Fields</h3>
           </div>
           
           <ScrollArea className="flex-1">
-            <div className="py-8 flex flex-col items-center gap-8">
-              {[1, 2, 3, 4].map((page) => (
-                <div key={page} className="relative w-full flex items-center justify-center">
-                   <AnimatePresence>
-                     {currentPage === page && (
-                       <motion.div 
-                          layoutId="activeRailBlade"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="absolute left-0 w-1.5 h-8 bg-brand rounded-r-full shadow-[2px_0_8px_rgba(90,95,242,0.4)]"
-                       />
-                     )}
-                   </AnimatePresence>
-                   <motion.button
-                     key={`page-btn-${page}`}
-                     whileHover={{ scale: 1.05 }}
-                     whileTap={{ scale: 0.95 }}
-                     onClick={() => setCurrentPage(page)}
-                     animate={{
-                       backgroundColor: currentPage === page ? "#5A5FF2" : "#FFFFFF",
-                       color: currentPage === page ? "#FFFFFF" : (currentPage === page ? "#FFFFFF" : "#6B7280"),
-                       borderColor: currentPage === page ? "#5A5FF2" : "#F3F4F6",
-                       boxShadow: currentPage === page ? "0 10px 15px -3px rgba(90, 95, 242, 0.3)" : "none"
-                     }}
-                     className={cn(
-                       "w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-black transition-all border-2 relative z-10",
-                       currentPage === page ? "ring-4 ring-brand/10" : "hover:border-brand/30"
-                     )}
-                   >
-                     <span className="relative z-20 pointer-events-none">{page}</span>
-                   </motion.button>
+            <div className="p-4 space-y-1">
+              <div className="py-2 px-2">
+                <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Standard fields</h4>
+                <div className="space-y-1">
+                  <FieldItem icon={<PenLine size={16} />} label="Signature" color="text-[#FFB800]" />
+                  <FieldItem icon={<div className="font-black text-[10px]">DS</div>} label="Initial" color="text-[#4F46E5]" />
+                  <FieldItem icon={<Stamp size={16} />} label="Stamp" color="text-[#6366F1]" />
+                  <FieldItem icon={<Calendar size={16} />} label="Date Signed" color="text-[#10B981]" />
                 </div>
-              ))}
+              </div>
+
+              <Separator className="my-2 opacity-50" />
+
+              <div className="py-2 px-2">
+                <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Personal info</h4>
+                <div className="space-y-1">
+                  <FieldItem icon={<User size={16} />} label="Full Name" />
+                  <FieldItem icon={<User size={16} className="opacity-50" />} label="First Name" />
+                  <FieldItem icon={<User size={16} className="opacity-50" />} label="Last Name" />
+                  <FieldItem icon={<Mail size={16} />} label="Email Address" />
+                  <FieldItem icon={<Building2 size={16} />} label="Company" />
+                  <FieldItem icon={<Briefcase size={16} />} label="Title" />
+                </div>
+              </div>
+
+              <Separator className="my-2 opacity-50" />
+
+              <div className="py-2 px-2">
+                <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Inputs</h4>
+                <div className="space-y-1">
+                  <FieldItem icon={<Type size={16} />} label="Text Box" />
+                  <FieldItem icon={<Square size={16} />} label="Checkbox" />
+                </div>
+              </div>
             </div>
           </ScrollArea>
         </aside>
 
         {/* Main Document Canvas */}
         <main className="flex-1 overflow-auto p-8 lg:p-12 bg-[#F8FAFC] z-0 scroll-smooth">
-          <div className="flex flex-col items-center min-w-max">
+          <div className="flex flex-col items-center min-w-max relative">
+            {/* Floating Page Navigation */}
+            <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-40 bg-white/90 backdrop-blur-md border border-gray-200/50 rounded-full h-12 flex items-center gap-1 px-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group">
+               <Button 
+                variant="ghost" 
+                size="icon" 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="h-8 w-8 rounded-full text-gray-400 hover:text-brand transition-all"
+               >
+                 <ChevronLeft size={16} />
+               </Button>
+               
+               <div className="flex items-center gap-2 px-4 border-l border-r border-gray-100 mx-2">
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page</span>
+                  <div className="flex items-center gap-1">
+                     <span className="text-[12px] font-black text-brand">{currentPage}</span>
+                     <span className="text-[10px] font-black text-gray-300">/</span>
+                     <span className="text-[12px] font-black text-gray-400">4</span>
+                  </div>
+               </div>
+
+               <Button 
+                variant="ghost" 
+                size="icon" 
+                disabled={currentPage === 4}
+                onClick={() => setCurrentPage(p => Math.min(4, p + 1))}
+                className="h-8 w-8 rounded-full text-gray-400 hover:text-brand transition-all"
+               >
+                 <ChevronRight size={16} />
+               </Button>
+            </div>
+
             <motion.div
               key={currentPage}
               initial={{ opacity: 0, scale: (zoom / 100) * 0.99, y: 10 }}
@@ -616,6 +658,24 @@ function EditableField({ label, value, owner, onChange }: { label: string, value
         </div>
       </div>
     </div>
+  )
+}
+
+function FieldItem({ icon, label, color = "text-gray-500" }: { icon: React.ReactNode, label: string, color?: string }) {
+  return (
+    <motion.div 
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm cursor-grab active:cursor-grabbing border-2 border-transparent hover:border-brand/10 group transition-all"
+    >
+      <div className={cn(
+        "w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center transition-all group-hover:rotate-3 shadow-inner",
+        color
+      )}>
+        {icon}
+      </div>
+      <span className="text-[12px] font-bold text-gray-600 group-hover:text-gray-900 transition-colors truncate">{label}</span>
+    </motion.div>
   )
 }
 
