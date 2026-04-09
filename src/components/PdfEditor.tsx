@@ -471,7 +471,11 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
                   
                   <div className="mt-0.5">
                     <span className={cn("text-[11px] font-black tracking-tight truncate block px-0.5", field.color.replace('bg-', 'text-'))}>
-                      {owner.name}
+                      {field.label === 'Date Signed' ? new Date().toLocaleDateString() : 
+                       field.label === 'Email Address' ? `${owner.name.toLowerCase().replace(' ', '.')}@email.com` :
+                       field.label === 'Company' ? 'Nexus Enterprise' :
+                       field.label === 'Title' ? owner.role.split(' ')[0] :
+                       owner.name}
                     </span>
                   </div>
                 </motion.div>
