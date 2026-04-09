@@ -218,7 +218,7 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98, y: 30 }}
       transition={airbnbTransition}
-      className="fixed top-12 bottom-12 inset-x-12 z-50 bg-[#F5F7F9] flex flex-col rounded-[40px] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.4)] border border-white/20 overflow-hidden"
+      className="fixed inset-0 z-50 bg-[#F5F7F9] flex flex-col"
     >
       {/* Premium Multi-Layer Header */}
       <nav className="z-30 bg-white border-b shadow-sm">
@@ -688,50 +688,55 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
 
       {/* Pre-flight Confirmation Modal */}
       <Dialog open={isConfirmingSend} onOpenChange={setIsConfirmingSend}>
-        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-[40px] border-none shadow-2xl">
-          <DialogHeader className="p-12 text-center bg-gray-50/50 border-b">
-             <div className="w-20 h-20 bg-white rounded-[28px] flex items-center justify-center text-brand mx-auto mb-8 shadow-xl border border-brand/5">
-                <Loader2 size={32} className={isReady ? "animate-spin" : ""} />
-             </div>
-             <DialogTitle className="text-3xl font-black text-gray-900 tracking-tight mb-4 leading-tight">Final Transmission<br />Audit</DialogTitle>
-             <p className="text-[13px] text-gray-500 font-bold px-8 leading-relaxed">Ready to initiate the Envoy to DocuSign. All recipients and field mappings have been validated.</p>
-          </DialogHeader>
-
-          <div className="px-12 pb-12 pt-10 space-y-8">
-             <div className="bg-white rounded-[24px] p-8 border-2 border-gray-50 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-brand/5 rounded-full -mr-12 -mt-12 group-hover:bg-brand/10 transition-all" />
-                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 relative z-10">Signing Order Audit</h4>
-                <div className="space-y-6 relative z-10">
-                   {parties.map((p, i) => (
-                     <div key={p.id} className="flex items-center justify-between group/item">
-                        <div className="flex items-center gap-4">
-                           <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center font-black text-[11px] text-gray-900 border border-gray-100 group-hover/item:border-brand/20 group-hover/item:bg-white transition-all">{i+1}</div>
-                           <div>
-                              <div className="text-[13px] font-black text-gray-900 leading-none">{p.name}</div>
-                              <div className="text-[10px] text-gray-400 mt-2 uppercase font-black tracking-widest">{p.role}</div>
-                           </div>
-                        </div>
-                        <Badge variant="outline" className="h-5 px-2 text-[9px] bg-emerald-50 text-emerald-600 border-none uppercase font-black">Mapped</Badge>
-                     </div>
-                   ))}
-                </div>
-             </div>
-
-             <div className="flex flex-col gap-4 pt-4">
-                <Button 
-                   onClick={triggerActualSend}
-                   className="h-16 bg-brand hover:bg-brand/90 text-white rounded-[22px] font-black text-[12px] uppercase tracking-[0.25em] shadow-2xl shadow-brand/30 active:scale-95 transition-all"
-                >
-                   Finalize & Transmit
-                </Button>
-                <Button 
-                   variant="ghost" 
-                   onClick={() => setIsConfirmingSend(false)} 
-                   className="h-14 rounded-2xl font-black text-[11px] uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all"
-                >
-                   Back to Editor
-                </Button>
-             </div>
+        <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden rounded-[40px] border-none shadow-2xl max-h-[85vh] flex flex-col">
+          {/* Aesthetic Black Header Strip */}
+          <div className="h-2 w-full bg-gray-900 shrink-0" />
+          
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <DialogHeader className="p-12 pb-8 text-center bg-gray-50/50 border-b relative">
+               <div className="w-20 h-20 bg-white rounded-[28px] flex items-center justify-center text-brand mx-auto mb-8 shadow-xl border border-brand/5 relative z-10">
+                  <Loader2 size={32} className={isReady ? "animate-spin" : ""} />
+               </div>
+               <DialogTitle className="text-3xl font-black text-gray-900 tracking-tight mb-4 leading-tight">Final Transmission<br />Audit</DialogTitle>
+               <p className="text-[13px] text-gray-500 font-bold px-8 leading-relaxed">Ready to initiate the Envoy to DocuSign. All recipients and field mappings have been validated.</p>
+            </DialogHeader>
+  
+            <div className="px-12 pb-12 pt-10 space-y-8">
+               <div className="bg-white rounded-[24px] p-8 border-2 border-gray-50 shadow-sm relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-brand/5 rounded-full -mr-12 -mt-12 group-hover:bg-brand/10 transition-all" />
+                  <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 relative z-10">Signing Order Audit</h4>
+                  <div className="space-y-6 relative z-10">
+                     {parties.map((p, i) => (
+                       <div key={p.id} className="flex items-center justify-between group/item">
+                          <div className="flex items-center gap-4">
+                             <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center font-black text-[11px] text-gray-900 border border-gray-100 group-hover/item:border-brand/20 group-hover/item:bg-white transition-all">{i+1}</div>
+                             <div>
+                                <div className="text-[13px] font-black text-gray-900 leading-none">{p.name}</div>
+                                <div className="text-[10px] text-gray-400 mt-2 uppercase font-black tracking-widest">{p.role}</div>
+                             </div>
+                          </div>
+                          <Badge variant="outline" className="h-5 px-2 text-[9px] bg-emerald-50 text-emerald-600 border-none uppercase font-black">Mapped</Badge>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+  
+               <div className="flex flex-col gap-4 pt-4">
+                  <Button 
+                     onClick={triggerActualSend}
+                     className="h-16 bg-brand hover:bg-brand/90 text-white rounded-[22px] font-black text-[12px] uppercase tracking-[0.25em] shadow-2xl shadow-brand/30 active:scale-95 transition-all"
+                  >
+                     Finalize & Transmit
+                  </Button>
+                  <Button 
+                     variant="ghost" 
+                     onClick={() => setIsConfirmingSend(false)} 
+                     className="h-14 rounded-2xl font-black text-[11px] uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all"
+                  >
+                     Back to Editor
+                  </Button>
+               </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
