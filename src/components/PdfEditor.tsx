@@ -218,7 +218,7 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98, y: 30 }}
       transition={airbnbTransition}
-      className="fixed inset-0 z-50 bg-[#F5F7F9] flex flex-col"
+      className="fixed top-12 inset-x-0 bottom-0 z-50 bg-[#F5F7F9] flex flex-col rounded-t-[40px] shadow-[0_-20px_80px_-20px_rgba(0,0,0,0.3)] border-t border-white/20"
     >
       {/* Premium Multi-Layer Header */}
       <nav className="z-30 bg-white border-b shadow-sm">
