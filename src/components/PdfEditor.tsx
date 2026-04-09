@@ -450,28 +450,29 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
                     position: 'absolute'
                   }}
                   className={cn(
-                    "z-30 cursor-grab active:cursor-grabbing p-2.5 px-4 rounded-xl flex flex-col gap-1 shadow-premium border-2 select-none group/field transition-shadow hover:shadow-2xl",
-                    field.color,
+                    "z-30 cursor-grab active:cursor-grabbing p-2 px-3.5 rounded-xl flex flex-col gap-0.5 border-2 select-none group/field transition-all bg-white/80 backdrop-blur-md",
                     field.color.replace('bg-', 'border-'),
-                    "text-white shadow-[0_12px_24px_-8px_rgba(0,0,0,0.3)] min-w-[140px]"
+                    "shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.15)] min-w-[120px]"
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 opacity-80">
-                      <div className="scale-75">{field.icon}</div>
-                      <span className="text-[8px] font-black uppercase tracking-[0.2em]">{field.label}</span>
+                    <div className="flex items-center gap-1.5 opacity-60">
+                      <div className={cn("scale-75", field.color.replace('bg-', 'text-'))}>{field.icon}</div>
+                      <span className={cn("text-[7px] font-black uppercase tracking-[0.2em]", field.color.replace('bg-', 'text-'))}>{field.label}</span>
                     </div>
                     <button 
                       onPointerDown={(e) => e.stopPropagation()}
                       onClick={() => handleDeletePlaced(field.id)}
-                      className="opacity-0 group-hover/field:opacity-100 p-0.5 hover:bg-black/20 rounded transition-all"
+                      className="opacity-0 group-hover/field:opacity-100 p-0.5 hover:bg-gray-100 rounded transition-all"
                     >
-                      <X size={10} />
+                      <X size={8} className="text-gray-400" />
                     </button>
                   </div>
                   
                   <div className="mt-0.5">
-                    <span className="text-[12px] font-black tracking-tight truncate block">{owner.name}</span>
+                    <span className={cn("text-[11px] font-black tracking-tight truncate block px-0.5", field.color.replace('bg-', 'text-'))}>
+                      {owner.name}
+                    </span>
                   </div>
                 </motion.div>
               )
