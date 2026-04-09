@@ -448,9 +448,10 @@ export default function PdfEditor({ documentName, onClose, initialData }: PdfEdi
                   position: 'absolute'
                 }}
                 className={cn(
-                  "z-30 cursor-grab active:cursor-grabbing p-1 px-3 rounded-lg flex items-center gap-2 shadow-premium border-2 select-none group/field",
+                  "z-30 cursor-grab active:cursor-grabbing p-1.5 px-3 rounded-lg flex items-center gap-2 shadow-premium border-2 select-none group/field transition-shadow hover:shadow-xl",
                   field.color,
-                  "text-white bg-opacity-90 backdrop-blur-sm"
+                  field.color.replace('bg-', 'border-'),
+                  "text-white shadow-[0_8px_16px_-4px_rgba(0,0,0,0.2)]"
                 )}
               >
                 <div className="opacity-80 scale-75">{field.icon}</div>
