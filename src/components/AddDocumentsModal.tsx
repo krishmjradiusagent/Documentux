@@ -54,6 +54,7 @@ interface FormTemplate {
   id: string
   name: string
   category: string
+  subcategory?: string
   isPopular?: boolean
   isPackage?: boolean
   children?: { id: string, name: string }[]
@@ -66,10 +67,47 @@ interface UploadedFile {
 }
 
 const formLibrary: FormTemplate[] = [
-  { id: 'ca-rpa', name: 'California Residential Purchase Agreement (RPA)', category: 'Offers', isPopular: true },
-  { id: 'ca-ad', name: 'Disclosure Regarding Real Estate Agency Relationship', category: 'Offers', isPopular: true },
-  { id: 'ca-rlas', name: 'Residential Lease or Month-to-Month Rental Agreement', category: 'Listings' },
-  { id: 'ca-spq', name: 'Seller Property Questionnaire (SPQ)', category: 'Listings', isPopular: true },
+  // OFFERS
+  { id: 'ca-rpa-norcal', name: 'California Residential Purchase Agreement (NorCal)', category: 'Offers', subcategory: 'Northern California (NorCal)', isPopular: true },
+  { id: 'ca-rpa-socal', name: 'California Residential Purchase Agreement (SoCal)', category: 'Offers', subcategory: 'Southern California (SoCal)', isPopular: true },
+  { id: 'ca-ad', name: 'Disclosure Regarding Real Estate Agency Relationship', category: 'Offers', subcategory: 'Buyer Offer Essentials', isPopular: true },
+  { id: 'ca-bfa', name: 'Buyer Financial Advisory', category: 'Offers', subcategory: 'Buyer Offer Essentials' },
+  { id: 'ca-cash-add', name: 'Cash Offer Addendum', category: 'Offers', subcategory: 'Cash Offers' },
+  { id: 'ca-poa', name: 'Proof of Funds Document', category: 'Offers', subcategory: 'Cash Offers' },
+  { id: 'ca-fin-add', name: 'Financing Addendum', category: 'Offers', subcategory: 'Financed Offers' },
+  { id: 'ca-fha-va', name: 'FHA/VA Amendatory Clause', category: 'Offers', subcategory: 'Financed Offers' },
+  { id: 'ca-bca', name: 'Buyer Contingency Advisory', category: 'Offers', subcategory: 'Inspection & Contingencies' },
+  { id: 'ca-scw', name: 'Seller Contingency Withdrawal', category: 'Offers', subcategory: 'Inspection & Contingencies' },
+  { id: 'ca-rr', name: 'Request for Repair', category: 'Offers', subcategory: 'Inspection & Contingencies' },
+  { id: 'ca-sco', name: 'Seller Counter Offer #1', category: 'Offers', subcategory: 'Counter Offers & Negotiation', isPopular: true },
+  { id: 'ca-bco', name: 'Buyer Counter Offer #1', category: 'Offers', subcategory: 'Counter Offers & Negotiation' },
+  { id: 'ca-smco', name: 'Seller Multiple Counter Offer', category: 'Offers', subcategory: 'Multiple Offer Scenarios', isPopular: true },
+  { id: 'ca-bmco', name: 'Buyer Multiple Counter Offer', category: 'Offers', subcategory: 'Multiple Offer Scenarios' },
+  { id: 'ca-avid', name: 'Agent Visual Inspection Disclosure', category: 'Offers', subcategory: 'Disclosures' },
+  { id: 'ca-wfa', name: 'Wire Fraud Advisory', category: 'Offers', subcategory: 'Disclosures' },
+  { id: 'aud-pre', name: 'Pre-Audit Compliance Checklist', category: 'Offers', subcategory: 'Compliance & Audit' },
+  { id: 'rad-offer-sum', name: 'Radius Offer Summary Sheet', category: 'Offers', subcategory: 'Compliance & Audit', isPopular: true },
+
+  // LISTINGS
+  { id: 'la-norcal', name: 'Exclusive Right to Sell (NorCal)', category: 'Listings', subcategory: 'Northern California (NorCal)' },
+  { id: 'la-socal', name: 'Exclusive Right to Sell (SoCal)', category: 'Listings', subcategory: 'Southern California (SoCal)' },
+  { id: 'ca-rlas', name: 'Residential Lease or Month-to-Month Rental Agreement', category: 'Listings', subcategory: 'Listing Essentials' },
+  { id: 'la-ess', name: 'Listing Agreement Essentials Checklist', category: 'Listings', subcategory: 'Listing Essentials' },
+  { id: 'ca-spq', name: 'Seller Property Questionnaire (SPQ)', category: 'Listings', subcategory: 'Seller Disclosures', isPopular: true },
+  { id: 'ca-tds', name: 'Transfer Disclosure Statement (TDS)', category: 'Listings', subcategory: 'Seller Disclosures', isPopular: true },
+  { id: 'ca-lbp', name: 'Lead-Based Paint Disclosure', category: 'Listings', subcategory: 'Seller Disclosures' },
+  { id: 'pl-prep', name: 'Pre-Listing Property Checklist', category: 'Listings', subcategory: 'Pre-Listing Preparation' },
+  { id: 'ca-selm', name: 'Seller Instruction to Exclude Listing from MLS', category: 'Listings', subcategory: 'Marketing & MLS' },
+  { id: 'mls-input', name: 'MLS Input Form', category: 'Listings', subcategory: 'Marketing & MLS' },
+  { id: 'oh-reg', name: 'Open House Visitor Registration', category: 'Listings', subcategory: 'Open House & Showings' },
+  { id: 'showing-inst', name: 'Showing Instructions & Lockbox Access', category: 'Listings', subcategory: 'Open House & Showings' },
+  { id: 'la-mod', name: 'Modification of Terms', category: 'Listings', subcategory: 'Listing Updates & Amendments' },
+  { id: 'la-ext', name: 'Extension of Listing Period', category: 'Listings', subcategory: 'Listing Updates & Amendments' },
+  { id: 'la-canc', name: 'Cancellation of Listing', category: 'Listings', subcategory: 'Cancellation & Withdrawal' },
+  { id: 'aud-fin', name: 'Final Broker Review Log', category: 'Listings', subcategory: 'Compliance & Review' },
+  
+  // TEMPLATES (Temporarily hidden per user request)
+  /*
   { 
     id: 'pkg-standard', 
     name: 'Standard Disclosure Package', 
@@ -83,8 +121,7 @@ const formLibrary: FormTemplate[] = [
   },
   { id: 'ca-aae', name: 'Additional Agent Acknowledgement', category: 'Templates' },
   { id: 'rad-keysafe', name: 'Radius Keysafe/Lockbox Addendum', category: 'Templates', isPopular: true },
-  { id: 'aud-pre', name: 'Pre-Audit Compliance Checklist', category: 'Offers' },
-  { id: 'aud-fin', name: 'Final Broker Review Log', category: 'Listings' },
+  */
 ]
 
 export default function AddDocumentsModal({ 
@@ -99,6 +136,7 @@ export default function AddDocumentsModal({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState('Offers')
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
   const [selectedState, setSelectedState] = useState('California')
   
   // High-Fidelity Upload Management
@@ -110,7 +148,11 @@ export default function AddDocumentsModal({
   const filteredForms = formLibrary.filter(f => {
     const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase())
     if (selectedCategory === 'Uploads') return false
-    return matchesSearch && f.category === selectedCategory
+    
+    const matchesCategory = f.category === selectedCategory
+    const matchesSubcategory = !selectedSubcategory || f.subcategory === selectedSubcategory
+    
+    return matchesSearch && matchesCategory && matchesSubcategory
   })
 
   const toggleSelect = (id: string, isPackage = false, children?: { id: string }[]) => {
@@ -195,30 +237,99 @@ export default function AddDocumentsModal({
         </DialogHeader>
 
         <div className="flex flex-1 overflow-hidden min-h-0">
-          {/* Navigation Sidebar */}
-          <aside className="w-52 border-r border-gray-100 bg-gray-50/20 p-4 flex flex-col gap-1.5 shrink-0">
-            <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Library</h4>
-            {['Offers', 'Listings', 'Templates', 'Uploads'].map((cat) => (
+          <aside className="w-56 border-r border-gray-100 bg-gray-50/20 p-4 flex flex-col shrink-0 overflow-y-auto">
+            <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-2">Library</h4>
+            
+            <Accordion type="multiple" defaultValue={["Offers", "Listings"]} className="w-full flex-1">
+              {['Offers', 'Listings'].map((cat) => (
+                <AccordionItem key={cat} value={cat} className="border-none mb-1">
+                  <AccordionTrigger className="hover:no-underline py-0 group">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setSelectedCategory(cat)
+                        setSelectedSubcategory(null)
+                      }}
+                      className={cn(
+                        "justify-start h-9 w-full rounded-lg font-bold text-[11px] transition-all relative px-3",
+                        cat === selectedCategory 
+                          ? "bg-white text-brand shadow-sm border border-brand/10" 
+                          : "text-gray-500 hover:bg-white/50"
+                      )}
+                    >
+                      {cat}
+                      {cat === selectedCategory && (
+                        <motion.div layoutId="navBlade" className="absolute left-0 w-1 h-5 bg-brand rounded-r-full" />
+                      )}
+                    </Button>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-2 pt-1">
+                    <div className="flex flex-col gap-1 ml-4 border-l border-gray-100">
+                      {(cat === 'Offers' ? [
+                        'Northern California (NorCal)', 
+                        'Southern California (SoCal)', 
+                        'Buyer Offer Essentials', 
+                        'Cash Offers', 
+                        'Financed Offers', 
+                        'Inspection & Contingencies', 
+                        'Counter Offers & Negotiation', 
+                        'Multiple Offer Scenarios', 
+                        'Disclosures', 
+                        'Compliance & Audit'
+                      ] : [
+                        'Northern California (NorCal)',
+                        'Southern California (SoCal)',
+                        'Listing Essentials',
+                        'Seller Disclosures',
+                        'Pre-Listing Preparation',
+                        'Marketing & MLS',
+                        'Open House & Showings',
+                        'Listing Updates & Amendments',
+                        'Cancellation & Withdrawal',
+                        'Compliance & Review'
+                      ]).map(sub => (
+                        <button
+                          key={sub}
+                          onClick={() => {
+                            setSelectedCategory(cat)
+                            setSelectedSubcategory(sub)
+                          }}
+                          className={cn(
+                            "text-[10px] font-medium px-4 py-1.5 text-left transition-colors whitespace-nowrap overflow-hidden text-ellipsis w-full",
+                            sub === selectedSubcategory ? "text-brand font-bold bg-brand/5" : "text-gray-400 hover:text-brand"
+                          )}
+                          title={sub}
+                        >
+                          {sub}
+                        </button>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+
+            <div className="mt-4 pt-4 border-t border-gray-100">
               <Button
-                key={cat}
                 variant="ghost"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory('Uploads')
+                  setSelectedSubcategory(null)
+                }}
                 className={cn(
-                  "justify-start h-9 rounded-lg font-bold text-[11px] transition-all relative px-3",
-                  cat === selectedCategory 
+                  "justify-start h-9 w-full rounded-lg font-bold text-[11px] transition-all relative px-3",
+                  selectedCategory === 'Uploads' 
                     ? "bg-white text-brand shadow-sm border border-brand/10" 
                     : "text-gray-500 hover:bg-white/50"
                 )}
               >
-                {cat}
-                {cat === selectedCategory && (
-                  <motion.div layoutId="navBlade" className="absolute left-0 w-1 h-5 bg-brand rounded-r-full" />
-                )}
-                {cat === 'Uploads' && uploadedFiles.length > 0 && (
+                <Upload size={14} className="mr-2" />
+                Uploads
+                {uploadedFiles.length > 0 && (
                   <Badge className="ml-auto bg-brand text-white text-[8px] px-1 h-3.5 min-w-[14px] flex justify-center">{uploadedFiles.length}</Badge>
                 )}
               </Button>
-            ))}
+            </div>
           </aside>
 
           {/* Main Content Area */}
@@ -483,7 +594,7 @@ export default function AddDocumentsModal({
         <div className="p-5 bg-gray-50/40 border-t flex flex-col gap-3 shrink-0">
           <div className="flex items-center justify-between">
             <Button variant="ghost" onClick={() => onOpenChange(false)} className="px-6 h-9 rounded-xl font-black text-[9px] text-gray-400 uppercase tracking-widest hover:text-gray-900 transition-all">
-              Exit Document Hub
+              Close
             </Button>
             <div className="flex items-center gap-6">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mr-2">
@@ -491,12 +602,12 @@ export default function AddDocumentsModal({
               </span>
               <Button 
                 className={cn(
-                  "px-10 h-10 rounded-xl bg-brand hover:bg-brand/90 text-white font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-brand/20 transition-all active:scale-95 flex items-center gap-3",
-                  (selectedIds.length === 0 && uploadedFiles.length === 0) && "opacity-10 grayscale pointer-events-none"
+                  "px-10 h-10 rounded-xl bg-brand hover:bg-brand/90 text-white font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-brand/20 transition-all focus:scale-95 active:scale-90 flex items-center gap-3",
+                  (selectedIds.length === 0 && uploadedFiles.length === 0) && "opacity-20 grayscale pointer-events-none"
                 )}
                 onClick={handleAdd}
               >
-                Incorporate {selectedIds.length + uploadedFiles.length > 0 ? `${selectedIds.length + uploadedFiles.length} Documents` : ''}
+                Attach {selectedIds.length + uploadedFiles.length > 0 ? `${selectedIds.length + uploadedFiles.length} Documents` : ''}
                 <ArrowRight size={18} />
               </Button>
             </div>
