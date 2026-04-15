@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, CreditCard, PieChart, Users, Puzzle, 
   Sparkles, Bell, Mail, Phone, Settings as SettingsIcon,
-  Search, PhoneIncoming, PhoneOutgoing, FileText, Plus
+  PhoneIncoming, PhoneOutgoing, FileText, Plus
 } from 'lucide-react';
+import { useCall } from '../context/CallContext';
 
 const easeOutExpo = [0.19, 1, 0.22, 1] as const;
 
@@ -43,6 +44,7 @@ const tabs = [
 ];
 
 export default function Settings() {
+  const { openDialer } = useCall();
   const [activeTab, setActiveTab] = useState('calling');
   const [callCategory, setCallCategory] = useState<LogCategory>('Outgoing');
   const [hoveredNote, setHoveredNote] = useState<string | null>(null);
@@ -105,11 +107,56 @@ export default function Settings() {
                   <h2 className="text-xl font-bold text-gray-900 tracking-tight">Calling</h2>
                   <p className="text-gray-500 text-sm mt-1">Manage your telephony and communication preferences.</p>
                 </div>
-                <div className="flex gap-2">
-                  <button className="p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors shadow-sm bg-white">
-                    <Search className="w-4 h-4 text-gray-400" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => openDialer({
+                    source: 'settings',
+                    clients: [
+                      { id: 'violet-cole', name: 'Violet Cole', numbers: ['(555) 123-4567', '(555) 123-8910'] },
+                      { id: 'marc-west', name: 'Marc West', numbers: ['(555) 234-5678'] },
+                      { id: 'sarah-j', name: 'Sarah J.', numbers: ['(555) 345-6789'] },
+                      { id: 'eric-caldwell', name: 'Eric Caldwell', numbers: ['(555) 412-8091', '(555) 412-8099'] },
+                      { id: 'maya-lin', name: 'Maya Lin', numbers: ['(555) 623-1944'] },
+                      { id: 'jon-rivera', name: 'Jon Rivera', numbers: ['(555) 718-4432'] },
+                      { id: 'naomi-brooks', name: 'Naomi Brooks', numbers: ['(555) 889-6120'] },
+                    ],
+                    groups: [
+                      {
+                        id: 'clients',
+                        label: 'Clients',
+                        members: [
+                          { id: 'violet-cole', name: 'Violet Cole', role: 'Buyer', group: 'client', numbers: ['(555) 123-4567', '(555) 123-8910'] },
+                          { id: 'marc-west', name: 'Marc West', role: 'Seller', group: 'client', numbers: ['(555) 234-5678'] },
+                          { id: 'sarah-j', name: 'Sarah J.', role: 'Landlord', group: 'client', numbers: ['(555) 345-6789'] },
+                          { id: 'eric-caldwell', name: 'Eric Caldwell', role: 'Buyer', group: 'client', numbers: ['(555) 412-8091', '(555) 412-8099'] },
+                          { id: 'maya-lin', name: 'Maya Lin', role: 'Seller', group: 'client', numbers: ['(555) 623-1944'] },
+                          { id: 'jon-rivera', name: 'Jon Rivera', role: 'Investor', group: 'client', numbers: ['(555) 718-4432'] },
+                          { id: 'naomi-brooks', name: 'Naomi Brooks', role: 'Landlord', group: 'client', numbers: ['(555) 889-6120'] },
+                        ],
+                      },
+                      {
+                        id: 'agents',
+                        label: 'Agents',
+                        members: [
+                          { id: 'monica-miller', name: 'Monica Miller', role: 'Agent', group: 'agent', numbers: ['(555) 777-1200'] },
+                          { id: 'sarah-johnson', name: 'Sarah Johnson', role: 'Team Lead', group: 'agent', numbers: ['(555) 888-3412'] },
+                          { id: 'kevin-ross', name: 'Kevin Ross', role: 'Agent', group: 'agent', numbers: ['(555) 771-2240'] },
+                          { id: 'amanda-frost', name: 'Amanda Frost', role: 'Agent', group: 'agent', numbers: ['(555) 772-1009'] },
+                          { id: 'danielle-park', name: 'Danielle Park', role: 'Transaction Coordinator', group: 'agent', numbers: ['(555) 773-3360'] },
+                          { id: 'nathan-reed', name: 'Nathan Reed', role: 'Admin', group: 'agent', numbers: ['(555) 774-5591'] },
+                        ],
+                      },
+                    ],
+                    title: 'Call from settings',
+                    description: 'Pick clients or agents, then select a number.',
+                    searchPlaceholder: 'Search name or number',
+                    primaryActionLabel: 'Call now',
+                    initialGroupId: 'clients'
+                  })}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:border-radius-blue hover:text-radius-blue"
+                >
+                  <Phone className="h-4 w-4" />
+                  Call
+                </button>
               </div>
 
               {/* Subtabs for Calling */}

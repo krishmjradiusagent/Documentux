@@ -10,11 +10,18 @@ export const DynamicIslandDialer = () => {
     duration, 
     isMuted, 
     isSpeakerOn, 
+    dialedDigits,
+    isKeypadOpen,
     endCall, 
     toggleMute, 
     toggleSpeaker, 
     retryCall, 
-    resetCall 
+    resetCall,
+    openKeypad,
+    closeKeypad,
+    pressKeypadDigit,
+    deleteKeypadDigit,
+    clearKeypad
   } = useCall();
 
   const formatDuration = (seconds: number) => {
@@ -57,6 +64,9 @@ export const DynamicIslandDialer = () => {
                   <h3 className="text-sm font-semibold">{client?.name}</h3>
                   <p className="text-[12px] text-gray-500 animate-pulse">Calling...</p>
                 </div>
+                <DialerButton onClick={openKeypad}>
+                  <DialpadGlyph />
+                </DialerButton>
                 <DialerButton onClick={endCall} variant="danger">
                   <PhoneOff className="w-5 h-5" />
                 </DialerButton>
@@ -74,9 +84,15 @@ export const DynamicIslandDialer = () => {
                 <div className="flex-1">
                   <h3 className="text-sm font-semibold">{client?.name}</h3>
                   <p className="text-[12px] font-mono text-gray-500">{formatDuration(duration)}</p>
+                  {dialedDigits && (
+                    <p className="mt-0.5 text-[11px] font-mono tracking-[0.2em] text-radius-blue">{dialedDigits}</p>
+                  )}
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <DialerButton onClick={isKeypadOpen ? closeKeypad : openKeypad} active={isKeypadOpen}>
+                    <DialpadGlyph />
+                  </DialerButton>
                   <DialerButton onClick={toggleMute} active={isMuted}>
                     {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                   </DialerButton>
@@ -142,6 +158,48 @@ export const DynamicIslandDialer = () => {
           </AnimatePresence>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {isKeypadOpen && status === 'connected' && (
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: easeOutExpo }}
+            className="pointer-events-auto absolute left-1/2 top-[calc(100%+12px)] w-[320px] -translate-x-1/2 rounded-[24px] border border-border bg-white/95 p-4 shadow-premium backdrop-blur-xl"
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Keypad</p>
+                <p className="text-[11px] text-gray-500">Use tones during the call.</p>
+              </div>
+              <button onClick={clearKeypad} className="text-[11px] font-bold text-radius-blue hover:underline">
+                Clear
+              </button>
+            </div>
+            <div className="mb-4 rounded-2xl bg-gray-50 px-4 py-3 text-center font-mono text-lg tracking-[0.28em] text-gray-900">
+              {dialedDigits || '—'}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {['1','2','3','4','5','6','7','8','9','*','0','#'].map((digit) => (
+                <button
+                  key={digit}
+                  onClick={() => pressKeypadDigit(digit)}
+                  className="h-12 rounded-2xl bg-white text-base font-semibold text-gray-900 shadow-sm ring-1 ring-gray-200 transition-transform active:scale-95 hover:bg-gray-50"
+                >
+                  {digit}
+                </button>
+              ))}
+              <button
+                onClick={deleteKeypadDigit}
+                className="col-span-3 h-10 rounded-xl border border-radius-blue/20 bg-radius-blue/10 text-[10px] font-black uppercase tracking-[0.2em] text-radius-blue transition-all active:scale-95 hover:bg-radius-blue/15"
+              >
+                Clear last digit
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -172,3 +230,11 @@ const DialerButton = ({
     </motion.button>
   );
 };
+
+const DialpadGlyph = () => (
+  <span className="grid h-4 w-4 grid-cols-3 grid-rows-3 gap-[2px]">
+    {Array.from({ length: 9 }).map((_, index) => (
+      <span key={index} className="h-1 w-1 rounded-full bg-current" />
+    ))}
+  </span>
+);

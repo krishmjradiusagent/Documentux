@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CallProvider } from './context/CallContext';
 import { DynamicIslandDialer } from './components/dialer/DynamicIslandDialer';
+import { CallLauncherDialog } from './components/dialer/CallLauncherDialog';
 import { CallSummaryModal } from './components/dialer/CallSummaryModal';
 import { SummaryToast } from './components/dialer/SummaryToast';
 import { CallSummarySidePanel } from './components/dialer/CallSummarySidePanel';
 import { ClientProfile } from './pages/ClientProfile';
 import Settings from './pages/Settings';
-import { User, Settings as SettingsIcon, LayoutDashboard, Calendar, Users, MessageSquare, Search, ChevronDown } from 'lucide-react';
+import { User, Settings as SettingsIcon, LayoutDashboard, Calendar, Users, MessageSquare, Search, ChevronDown, Phone } from 'lucide-react';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'profile' | 'settings'>('profile');
@@ -15,35 +16,69 @@ function App() {
 
   return (
     <CallProvider>
-      <div className="flex h-screen bg-[#f9fafb] font-sans selection:bg-radius-blue/20">
-        {/* Sidebar */}
-        <aside className="w-20 border-r border-border bg-white flex flex-col items-center py-8 gap-8 z-20">
-           <div className="w-10 h-10 bg-radius-blue rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-radius-blue/20">
-             R
-           </div>
-           
-           <nav className="flex flex-col gap-4">
-             <SidebarItem icon={<LayoutDashboard />} />
-             <SidebarItem icon={<Calendar />} />
-             <SidebarItem icon={<Users />} active={currentPage === 'profile'} onClick={() => { setCurrentPage('profile'); setIsProfileOpen(true); }} />
-             <SidebarItem icon={<MessageSquare />} />
-             <SidebarItem icon={<User />} />
-           </nav>
-
-           <div className="mt-auto">
-             <SidebarItem icon={<SettingsIcon />} active={currentPage === 'settings'} onClick={() => { setCurrentPage('settings'); setIsProfileOpen(false); }} />
-           </div>
+      <div className="flex h-screen bg-[#f7f8fc] font-sans selection:bg-radius-blue/20">
+        <aside className="w-[88px] border-r border-gray-200/80 bg-white z-20 flex flex-col items-center py-5">
+          <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-2xl bg-radius-blue text-white text-lg font-bold shadow-lg shadow-radius-blue/20">
+            R
+          </div>
+          <nav className="flex flex-1 flex-col items-center gap-3">
+            <SidebarItem icon={<LayoutDashboard />} label="Dashboard" />
+            <SidebarItem icon={<Calendar />} label="Calendar" />
+            <SidebarItem
+              icon={<Users />}
+              label="Clients"
+              active={currentPage === 'profile'}
+              onClick={() => { setCurrentPage('profile'); setIsProfileOpen(true); }}
+            />
+            <SidebarItem icon={<MessageSquare />} label="Messages" />
+            <SidebarItem icon={<User />} label="Account" />
+            <SidebarItem
+              icon={<SettingsIcon />}
+              label="Settings"
+              active={currentPage === 'settings'}
+              onClick={() => { setCurrentPage('settings'); setIsProfileOpen(false); }}
+            />
+          </nav>
+          <div className="mt-auto mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+            Radius
+          </div>
         </aside>
 
-        {/* Main Content Area */}
         <main className="flex-1 relative overflow-hidden flex flex-col">
+          <header className="flex items-center justify-between border-b border-gray-200/70 bg-white/80 px-8 py-4 backdrop-blur-xl">
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.25em] text-gray-400">Workspace</div>
+              <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+                {currentPage === 'settings' ? 'Settings' : 'Clients'}
+              </h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => { setCurrentPage('profile'); setIsProfileOpen(true); }}
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-radius-blue hover:text-radius-blue"
+              >
+                <Users className="h-4 w-4" />
+                Client panel
+              </button>
+              <button
+                onClick={() => { setCurrentPage('settings'); setIsProfileOpen(false); }}
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-radius-blue hover:text-radius-blue"
+              >
+                <SettingsIcon className="h-4 w-4" />
+                Settings
+              </button>
+              <button className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:border-radius-blue hover:text-radius-blue">
+                <Phone className="h-4 w-4" />
+              </button>
+            </div>
+          </header>
+
           {currentPage === 'settings' ? (
             <Settings />
           ) : (
             <ClientList onSelectClient={() => setIsProfileOpen(true)} />
           )}
 
-          {/* Side Panel Overlay */}
           <AnimatePresence>
             {isProfileOpen && currentPage === 'profile' && (
               <>
@@ -62,6 +97,7 @@ function App() {
 
         {/* Global Floating Components */}
         <DynamicIslandDialer />
+        <CallLauncherDialog />
         <CallSummaryModal />
         <SummaryToast />
         <CallSummarySidePanel />
@@ -147,16 +183,19 @@ const ClientList = ({ onSelectClient }: { onSelectClient: () => void }) => {
 
 const SidebarItem = ({ 
   icon, 
+  label,
   active = false, 
   onClick 
 }: { 
   icon: React.ReactNode; 
+  label: string;
   active?: boolean;
   onClick?: () => void;
 }) => (
   <button 
     onClick={onClick}
-    className={`p-3 rounded-2xl transition-all duration-300 ${active ? 'bg-radius-blue/10 text-radius-blue shadow-sm' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}`}
+    title={label}
+    className={`group flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-200 active:scale-95 ${active ? 'bg-[#5A5FF2]/10 text-[#5A5FF2] shadow-[0_8px_24px_-12px_rgba(90,95,242,0.45)]' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700'}`}
   >
     {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { size: 22 }) : icon}
   </button>

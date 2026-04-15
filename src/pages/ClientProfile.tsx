@@ -12,11 +12,17 @@ interface ClientProfileProps {
 }
 
 export const ClientProfile = ({ onClose }: ClientProfileProps) => {
-  const { startCall } = useCall();
+  const { openDialer } = useCall();
 
   const client = {
+    id: 'violet-cole',
     name: "Violet Cole",
-    number: "(555) 123-4567",
+    numbers: [
+      "(555) 123-4567",
+      "(555) 123-8910",
+      "(555) 123-2298",
+      "(555) 123-7741",
+    ],
     email: "violet.cole@email.com",
     address: "123 missions street, 3543 bouleverad ave, 4th cross, Palo alto, California, 54323",
     addedDate: "JUN 3 2024",
@@ -64,7 +70,13 @@ export const ClientProfile = ({ onClose }: ClientProfileProps) => {
           </div>
 
           <button 
-            onClick={() => startCall({ name: client.name, number: client.number })}
+            onClick={() => openDialer({
+              source: 'profile',
+              clients: [client],
+              title: 'Choose number to call',
+              description: 'Pick one number to call.',
+              primaryActionLabel: 'Call now'
+            })}
             className="w-10 h-10 flex items-center justify-center bg-[#EEF2FF] border border-[#C7D2FE] rounded-[10px] text-radius-blue transition-all hover:bg-[#E0E7FF]"
           >
             <Phone className="w-5 h-5 fill-radius-blue text-radius-blue" />
@@ -104,10 +116,16 @@ export const ClientProfile = ({ onClose }: ClientProfileProps) => {
           <div>
             <span className="block text-[10px] font-bold text-gray-400 uppercase mb-2">Phone</span>
             <button 
-              onClick={() => startCall({ name: client.name, number: client.number })}
+              onClick={() => openDialer({
+                source: 'profile',
+                clients: [client],
+                title: 'Choose number to call',
+                description: 'Pick one number to call.',
+                primaryActionLabel: 'Call now'
+              })}
               className="block text-sm font-bold text-radius-blue hover:underline"
             >
-              {client.number}
+              {client.numbers[0]}
             </button>
           </div>
           <div>
